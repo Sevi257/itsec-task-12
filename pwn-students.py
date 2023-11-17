@@ -90,9 +90,10 @@ for i in range(len(msg)):
                 # Nach der ersten Runde muss halt dann angepasst werden also der Nachrichtenstring für i + 1
                 # check out if it really comes out to 0x01 and not the real padding
                 # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
+                # Man muss C8'' noch anpassen dann immer
                 test = bytes(a ^ b ^ c for a, b, c in zip(binascii.unhexlify(encrypted_message), og_message,
                                                           (i + 1).to_bytes(1, "big")))
                 result.append(og_message)
-                #print("Test: ", test)
+                print("Test: ", test)
                 print("Succesful ", og_message)
                 break
