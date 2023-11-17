@@ -99,10 +99,14 @@ for i in range(len(msg)):
                 # check out if it really comes out to 0x01 and not the real padding
                 # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
                 # Man muss C8'' noch anpassen dann immer
-                test = bytes(a ^ b ^ c for a, b, c in zip(binascii.unhexlify(encrypted_message), og_message,
+                c8_two = bytes(a ^ b ^ c for a, b, c in zip(binascii.unhexlify(encrypted_message), og_message,
                                                           (i + 1).to_bytes(1, "little")))
                 result.append(og_message)
+                c8two_with_zeros = bytearray(msg)
+                c8two_with_zeros[len(final_msg) - i - 16] = bytearray(c8_two)[len(final_msg) - i - 16]
+
+                msg = c8two_with_zeros
                 # Man muss den Cyphertext anpassen
-                print("Test: ", test)
+                print("Test: ", c8_two)
                 print("Succesful ", og_message)
                 break
