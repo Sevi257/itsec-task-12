@@ -32,6 +32,7 @@ result = []
 for i in range(len(msg)):
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
+    #s.connect(("localhost", 1024))
     start = read_until(s, b"Do you")
     print(start)
     ########################################
@@ -63,6 +64,8 @@ for i in range(len(msg)):
     for j in range(256):
         s = socket.socket()
         s.connect(("itsec.sec.in.tum.de", 7023))
+        #s.connect(("localhost", 1024))
+
         read_until(s, b"Do you")
         test_msg = bytearray(msg)
         #print("Test_msg: ", binascii.hexlify(test_msg))
@@ -83,8 +86,13 @@ for i in range(len(msg)):
             else:
                 #print("Hello")
                 c8_ = bytearray(final_msg)[len(final_msg) - i - 16]
-                # P12
-                og_message = bytes(a ^ b ^ c for a, b, c in zip(binascii.unhexlify(encrypted_message), bytearray(c8_),
+                # P12 vielleicht muss die 1 noch mit Nullen davor sein
+                # Nicht mit sich selbst xoren sondern mit Nullen
+                # weil c8 muss ja an die richtige stelle
+                c8_with_zeros = bytearray(msg)
+                c8_with_zeros[len(final_msg)-i-16] = c8_
+                og_message = bytes(a ^ b ^ c for a, b, c in zip(binascii.unhexlify(encrypted_message),
+                                                                bytearray(c8_with_zeros),
                                                                 i.to_bytes(1, "little")))
                 # Vielleicht muss man des anders machen und mit Nullen auffüllen also z.B. 0x02
                 # Nach der ersten Runde muss halt dann angepasst werden also der Nachrichtenstring für i + 1
@@ -92,8 +100,9 @@ for i in range(len(msg)):
                 # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
                 # Man muss C8'' noch anpassen dann immer
                 test = bytes(a ^ b ^ c for a, b, c in zip(binascii.unhexlify(encrypted_message), og_message,
-                                                          (i + 1).to_bytes(1, "big")))
+                                                          (i + 1).to_bytes(1, "little")))
                 result.append(og_message)
+                # Man muss den Cyphertext anpassen
                 print("Test: ", test)
                 print("Succesful ", og_message)
                 break
