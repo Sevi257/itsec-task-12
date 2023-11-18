@@ -75,9 +75,9 @@ for i in range(len(msg)):
         # TODO -> Wieso nochmal xor eigentlich? Doch stimmt ich schicke ja nur final message des wird dann serverside bearbeitet und dann ist padding correct aber ich brauche j
 
         final_msg = bytes(a ^ b for a, b in zip(test_msg, binascii.unhexlify(encrypted_message)))
-        print("Final message sent: ", binascii.hexlify(final_msg))
-        print("Encrypted message : ", encrypted_message)
-        print("Test Message test : ", binascii.hexlify(test_msg))
+        #print("Final message sent: ", binascii.hexlify(final_msg))
+        #print("Encrypted message : ", encrypted_message)
+        #print("Test Message test : ", binascii.hexlify(test_msg))
         #print("Final Message: ", binascii.hexlify(final_msg))
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
@@ -117,7 +117,7 @@ for i in range(len(msg)):
                     # anstatt j nehme das k-te Byte von hinten
                     if i == 0:
                         c8_two = j ^ (i+1) ^ (i + 2)
-                        print("C82: ", c8_two)
+                        #print("C82: ", c8_two)
                         result.append(str(og_message))
                         test2_msg = bytearray(msg)
                         test2_msg[len(test2_msg) - 16 - i] = c8_two
@@ -128,9 +128,9 @@ for i in range(len(msg)):
                         msg[len(msg)-16-k] = c8_test
                         msg = bytes(msg)
 
-                print("New Message: " , msg)
-                print("Len MSG: ", len(msg))
+                #print("New Message: " , msg)
+                #print("Len MSG: ", len(msg))
                 # Man muss den Cyphertext anpassen
-                print("Succesful ", og_message)
+                #print("Succesful ", og_message)
                 break
     print("Result: ", result)
