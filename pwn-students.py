@@ -27,7 +27,7 @@ def read_until(s, token):
 # The server allows you to process a single message with each connection.
 # Connect multiple times to decrypt the (IV, msg) pair above byte by byte.
 print(len(msg))
-result = []
+result = ""
 for i in range(len(msg)):
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
@@ -118,7 +118,7 @@ for i in range(len(msg)):
                     if i == 0:
                         c8_two = j ^ (i+1) ^ (i + 2)
                         #print("C82: ", c8_two)
-                        result.append(str(og_message))
+                        result += chr(og_message)
                         test2_msg = bytearray(msg)
                         test2_msg[len(test2_msg) - 16 - i] = c8_two
                         msg = bytes(test2_msg)
@@ -128,9 +128,9 @@ for i in range(len(msg)):
                         msg[len(msg)-16-k] = c8_test
                         msg = bytes(msg)
 
-                #print("New Message: " , msg)
+                print("New Message: " , msg)
                 #print("Len MSG: ", len(msg))
                 # Man muss den Cyphertext anpassen
-                #print("Succesful ", og_message)
+                print("Succesful ", og_message)
                 break
     print("Result: ", result)
