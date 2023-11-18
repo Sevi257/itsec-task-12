@@ -11,8 +11,7 @@ import telnetlib
 
 # If you have done that, copy over a hexlified message + IV over to this script (replacing the zeros)
 iv = binascii.unhexlify("0000000000000000000000000000000000000000000000000000000000000000")
-msg = binascii.unhexlify(
-    "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+msg = binascii.unhexlify("00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
 
 
 def read_until(s, token):
@@ -50,17 +49,19 @@ for i in range(len(msg)):
     # P12 = 0x01 xor C8 (ursprüngliches Byte encrypted) xor C'8 (bruteforced byte for 0x01)
     # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
     # P11 = 0x02 xor C7' xor C7 og
+    if i == 0:
+        pattern = re.compile(r'IV was (.+?)\)\n\n', re.DOTALL)
 
-    pattern = re.compile(r'IV was (.+?)\)\n\n', re.DOTALL)
-
-    match = pattern.search(start.decode('utf-8'))
-    iv = binascii.unhexlify(match.group(1))
-    encrypted_message = start.split(b'\n')[1].decode('utf-8')
-    encrypted_message = encrypted_message.split("(")[0].strip()
-    bytes_cipher = binascii.unhexlify(encrypted_message)
-    print(len(bytes_cipher))
-    test_msg = msg
+        match = pattern.search(start.decode('utf-8'))
+        iv = binascii.unhexlify(match.group(1))
+        encrypted_message = start.split(b'\n')[1].decode('utf-8')
+        encrypted_message = encrypted_message.split("(")[0].strip()
+        bytes_cipher = binascii.unhexlify(encrypted_message)
+        print(len(bytes_cipher))
+        test_msg = msg
     # Hier die Variable für den Loop
+    # C'i-1 = Ci-1 ⊕ 00000001 ⊕ 0000000X | Ci
+
     for j in range(256):
         s = socket.socket()
         s.connect(("itsec.sec.in.tum.de", 7023))
@@ -99,11 +100,14 @@ for i in range(len(msg)):
                 # check out if it really comes out to 0x01 and not the real padding
                 # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
                 # Man muss C8'' noch anpassen dann immer
+                # Einerseits kann man wirklich nur auf Bytes arbeiten
+                # auch dass i+1 to bytes noch der Länge anpassen oder halt einfach da bei der Message einfügen
                 c8_two = bytes(a ^ b ^ c for a, b, c in zip(binascii.unhexlify(encrypted_message), og_message,
-                                                          (i + 1).to_bytes(1, "little")))
+                                                          (i + 2).to_bytes(1, "little")))
+                print("C82: ", c8_two)
                 result.append(og_message)
                 c8two_with_zeros = bytearray(msg)
-                c8two_with_zeros[len(final_msg) - i - 16] = bytearray(c8_two)[len(final_msg) - i - 16]
+                c8two_with_zeros[len(final_msg) - i - 16] = int(c8_two)
 
                 msg = c8two_with_zeros
                 # Man muss den Cyphertext anpassen
