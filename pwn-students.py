@@ -69,6 +69,7 @@ for i in range(len(msg)):
         read_until(s, b"Do you")
         test_msg = bytearray(msg)
         #print("Test_msg: ", binascii.hexlify(test_msg))
+        # Hier wird das i-letzte Byte gebruteforced
         test_msg[len(test_msg) - i - 16] = j
        # print("New Test_msg: ", binascii.hexlify(test_msg))
         # TODO -> Wieso nochmal xor eigentlich? Doch stimmt ich schicke ja nur final message des wird dann serverside bearbeitet und dann ist padding correct aber ich brauche j
@@ -92,12 +93,13 @@ for i in range(len(msg)):
                 #print("Hello")
                 #man muss xoren und c8 wird einfach zu dem Index in der encrypted message
                 c8_ = j
-                og_cipher_byte = bytearray(encrypted_message.encode())[len(encrypted_message)-16-i]
+                og_cipher_byte = bytes.fromhex(encrypted_message)[len(encrypted_message)//2-16-i]
                 print("C8_       : ", hex(c8_))
+                print("OG Cypher : ", og_cipher_byte)
                 # P12 vielleicht muss die 1 noch mit Nullen davor sein
                 # Nicht mit sich selbst xoren sondern mit Nullen
                 # weil c8 muss ja an die richtige stelle
-                og_message = i ^ c8_ ^ og_cipher_byte
+                og_message = (i+1) ^ c8_ ^ og_cipher_byte
                 # Vielleicht muss man des anders machen und mit Nullen auffüllen also z.B. 0x02
                 # Nach der ersten Runde muss halt dann angepasst werden also der Nachrichtenstring für i + 1
                 # check out if it really comes out to 0x01 and not the real padding
@@ -106,15 +108,29 @@ for i in range(len(msg)):
                 # Einerseits kann man wirklich nur auf Bytes arbeiten
                 # auch dass i+1 to bytes noch der Länge anpassen oder halt einfach da bei der Message einfügen
                 #dann mit einem for loop jedes Byte anpassen
-                c8_two = bytes([og_message ^ og_cipher_byte ^ (i + 1)])
-                print("C82: ", binascii.hexlify(c8_two))
-                result.append(c8_two)
-                c8two_with_zeros = bytearray(msg)
-                c8two_with_zeros[len(final_msg) - i - 16] = c8_two[0]
-                msg = c8two_with_zeros
+                for k in range(i+1):
+                    # Man muss die alten Bytes rausziehen und nochmal mit i xoren
+                    # X[15] = P’1[15] ⊕ C2[15] ⊕ P3[15] = 0x02 ⊕ C2[15] ⊕ P3[15] where C2[15] et P3[15] are known
+                    # Ich muss jedes Byte aus der Message xoren mit dem zugehörigen Klartext aus dem Result array
+                    # und zusätzlich noch mit dem i und dann zurückschreiben
+                    # nehme das erste Byte von hinten aus dem msg-array
+                    # anstatt j nehme das k-te Byte von hinten
+                    if i == 0:
+                        c8_two = j ^ (i+1) ^ (i + 2)
+                        print("C82: ", c8_two)
+                        result.append(str(og_message))
+                        test2_msg = bytearray(msg)
+                        test2_msg[len(test2_msg) - 16 - i] = c8_two
+                        msg = bytes(test2_msg)
+                    else:
+                        c8_test = bytearray(msg)[len(msg)-16-k] ^ (i+1) ^ (i+2)
+                        msg = bytearray(msg)
+                        msg[len(msg)-16-k] = c8_test
+                        msg = bytes(msg)
 
                 print("New Message: " , msg)
+                print("Len MSG: ", len(msg))
                 # Man muss den Cyphertext anpassen
-                print("Test: ", c8_two)
                 print("Succesful ", og_message)
                 break
+    print("Result: ", result)
