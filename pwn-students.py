@@ -107,7 +107,7 @@ for i in range(len(msg)):
                 print("C82: ", c8_two)
                 result.append(og_message)
                 c8two_with_zeros = bytearray(msg)
-                c8two_with_zeros[len(final_msg) - i - 16] = int(c8_two)
+                c8two_with_zeros[len(final_msg) - i - 16] = int(binascii.hexlify(c8_two), 16)
 
                 msg = c8two_with_zeros
                 # Man muss den Cyphertext anpassen
