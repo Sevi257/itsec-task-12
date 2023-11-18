@@ -33,7 +33,6 @@ for i in range(len(msg)):
     s.connect(("itsec.sec.in.tum.de", 7023))
     #s.connect(("localhost", 1024))
     start = read_until(s, b"Do you")
-    print(start)
     ########################################
     # Implement padding oracle attack here #
     ########################################
@@ -72,7 +71,12 @@ for i in range(len(msg)):
         #print("Test_msg: ", binascii.hexlify(test_msg))
         test_msg[len(test_msg) - i - 16] = j
        # print("New Test_msg: ", binascii.hexlify(test_msg))
+        # TODO -> Wieso nochmal xor eigentlich? Doch stimmt ich schicke ja nur final message des wird dann serverside bearbeitet und dann ist padding correct aber ich brauche j
+
         final_msg = bytes(a ^ b for a, b in zip(test_msg, binascii.unhexlify(encrypted_message)))
+        print("Final message sent: ", binascii.hexlify(final_msg))
+        print("Encrypted message : ", encrypted_message)
+        print("Test Message test : ", binascii.hexlify(test_msg))
         #print("Final Message: ", binascii.hexlify(final_msg))
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
@@ -86,15 +90,14 @@ for i in range(len(msg)):
                 print("Same Same")
             else:
                 #print("Hello")
-                c8_ = bytearray(final_msg)[len(final_msg) - i - 16]
+                #man muss xoren und c8 wird einfach zu dem Index in der encrypted message
+                c8_ = j
+                og_cipher_byte = bytearray(encrypted_message.encode())[len(encrypted_message)-16-i]
+                print("C8_       : ", hex(c8_))
                 # P12 vielleicht muss die 1 noch mit Nullen davor sein
                 # Nicht mit sich selbst xoren sondern mit Nullen
                 # weil c8 muss ja an die richtige stelle
-                c8_with_zeros = bytearray(msg)
-                c8_with_zeros[len(final_msg)-i-16] = c8_
-                og_message = bytes(a ^ b ^ c for a, b, c in zip(binascii.unhexlify(encrypted_message),
-                                                                bytearray(c8_with_zeros),
-                                                                i.to_bytes(1, "little")))
+                og_message = i ^ c8_ ^ og_cipher_byte
                 # Vielleicht muss man des anders machen und mit Nullen auffüllen also z.B. 0x02
                 # Nach der ersten Runde muss halt dann angepasst werden also der Nachrichtenstring für i + 1
                 # check out if it really comes out to 0x01 and not the real padding
@@ -102,14 +105,15 @@ for i in range(len(msg)):
                 # Man muss C8'' noch anpassen dann immer
                 # Einerseits kann man wirklich nur auf Bytes arbeiten
                 # auch dass i+1 to bytes noch der Länge anpassen oder halt einfach da bei der Message einfügen
-                c8_two = bytes(a ^ b ^ c for a, b, c in zip(binascii.unhexlify(encrypted_message), og_message,
-                                                          (i + 2).to_bytes(1, "little")))
-                print("C82: ", c8_two)
-                result.append(og_message)
+                #dann mit einem for loop jedes Byte anpassen
+                c8_two = bytes([og_message ^ og_cipher_byte ^ (i + 1)])
+                print("C82: ", binascii.hexlify(c8_two))
+                result.append(c8_two)
                 c8two_with_zeros = bytearray(msg)
-                c8two_with_zeros[len(final_msg) - i - 16] = int(binascii.hexlify(c8_two), 16)
-
+                c8two_with_zeros[len(final_msg) - i - 16] = c8_two[0]
                 msg = c8two_with_zeros
+
+                print("New Message: " , msg)
                 # Man muss den Cyphertext anpassen
                 print("Test: ", c8_two)
                 print("Succesful ", og_message)
