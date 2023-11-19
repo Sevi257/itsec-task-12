@@ -44,8 +44,7 @@ for i in range(len(msg)):
         encrypted_message = start.split(b'\n')[1].decode('utf-8')
         encrypted_message = encrypted_message.split("(")[0].strip()
         bytes_cipher = binascii.unhexlify(encrypted_message)
-        print(len(bytes_cipher))
-        test_msg = msg
+        msg = encrypted_message
 
     # Hier die Variable für den Loop
     # C'i-1 = Ci-1 ⊕ 00000001 ⊕ 0000000X | Ci
@@ -56,7 +55,7 @@ for i in range(len(msg)):
         #s.connect(("localhost", 1024))
 
         read_until(s, b"Do you")
-        final_msg = bytearray(encrypted_message)
+        final_msg = bytearray(msg)
        # print("New Test_msg: ", binascii.hexlify(test_msg))
         final_msg[-i-17] ^= j
         if i >= 16:
@@ -68,30 +67,22 @@ for i in range(len(msg)):
         s.send(binascii.hexlify(final_msg) + b"\n")
         response = read_until(s, b"\n")
         if "Bad" not in str(response):
-            if encrypted_message == binascii.hexlify(final_msg).decode():
+            if msg == binascii.hexlify(final_msg).decode():
                 found_same = j
                 print("Same Same")
             else:
                 found = True
-                #print("Hello")
-                #man muss xoren und c8 wird einfach zu dem Index in der encrypted message
-                og_cipher_byte = bytes.fromhex(encrypted_message)[-17-i]
-                print("OG Cypher : ", og_cipher_byte)
                 og_message = (i+1) ^ j
                 result += chr(og_message)
 
                 for k in range(i + 1):
                     if i == 0:
                         c8_two = j ^ (k + 1) ^ (i + 2)
-                        test2_msg = bytearray(msg)
-                        test2_msg[- 17 - i] = c8_two
-                        msg = bytes(test2_msg)
+                        bytearray(msg)[- 17 - i] = c8_two
                     else:
                         c8_test = bytearray(result.encode())[- k] ^ (i + 2)
                         print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
-                        test2_msg = bytearray(msg)
-                        test2_msg[- 17 - k] = c8_test
-                        msg = bytes(test2_msg)
+                        bytearray(msg)[- 17 - k] = c8_test
 
                 # Append the final result outside the loop
 
@@ -110,15 +101,11 @@ for i in range(len(msg)):
         for k in range(i + 1):
             if i == 0:
                 c8_two = found_same ^ (k + 1) ^ (i + 2)
-                test2_msg = bytearray(msg)
-                test2_msg[- 17 - i] = c8_two
-                msg = bytes(test2_msg)
+                bytearray(msg)[- 17 - i] = c8_two
             else:
                 c8_test = bytearray(result.encode())[-k] ^ (i + 2)
                 print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
-                test2_msg = bytearray(msg)
-                test2_msg[- 17 - k] = c8_test
-                msg = bytes(test2_msg)
+                bytearray(msg)[- 17 - k] = c8_test
 
         # Append the final result outside the loop
 
