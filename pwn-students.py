@@ -73,7 +73,7 @@ for i in range(len(msg)):
             final_msg = final_msg[:-16]
         if i >= 32:
             final_msg = final_msg[:-16]
-        #print("Final Message: ", binascii.hexlify(final_msg))
+        print("Final Message: ", binascii.hexlify(final_msg))
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
         response = read_until(s, b"\n")
@@ -87,8 +87,6 @@ for i in range(len(msg)):
                 print("Same Same")
             else:
                 found = True
-                #print("Hello")
-                #man muss xoren und c8 wird einfach zu dem Index in der encrypted message
                 c8_ = j
                 og_cipher_byte = bytes.fromhex(encrypted_message)[-17-i]
                 print("C8_       : ", hex(c8_))
@@ -96,7 +94,7 @@ for i in range(len(msg)):
                 # P12 vielleicht muss die 1 noch mit Nullen davor sein
                 # Nicht mit sich selbst xoren sondern mit Nullen
                 # weil c8 muss ja an die richtige stelle
-                og_message = (i+1) ^ c8_ # ^ og_cipher_byte
+                og_message = (i+1) ^ c8_
                 result += chr(og_message)
 
                 # Vielleicht muss man des anders machen und mit Nullen auffüllen also z.B. 0x02
