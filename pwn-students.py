@@ -71,7 +71,7 @@ for i in range(len(msg)):
                 print("Array: " ,bytearray(result.encode()))
                 found = True
                 og_message = (i+1) ^ j
-                result += chr(og_message)
+                result = chr(og_message) + result
 
                 for k in range(i + 1):
                     if i == 0:
@@ -80,8 +80,8 @@ for i in range(len(msg)):
                         test2_msg[- 17 - i] = c8_two
                         msg = bytes(test2_msg)
                     else:
-                        c8_test = bytearray(result.encode())[- k] ^ (i + 2)
-                        print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
+                        c8_test = bytearray(result.encode())[ k] ^ (i + 2)
+                        print(f"k: {k}, Byte: {bytearray(result.encode())[k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
                         test2_msg = bytearray(msg)
                         test2_msg[- 17 - k] = c8_test
                         msg = bytes(test2_msg)
@@ -96,7 +96,7 @@ for i in range(len(msg)):
         found = True
         c8_ = found_same
         og_message = (i + 1) ^ c8_
-        result += chr(og_message)
+        result = chr(og_message) + result
 
         for k in range(i + 1):
             if i == 0:
@@ -106,8 +106,8 @@ for i in range(len(msg)):
                 msg = bytes(test2_msg)
             else:
                 #Bei Result wird falsch geaccesed
-                c8_test = bytearray(result.encode())[-k] ^ (i + 2)
-                print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
+                c8_test = bytearray(result.encode())[k] ^ (i + 2)
+                print(f"k: {k}, Byte: {bytearray(result.encode())[k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
                 test2_msg = bytearray(msg)
                 test2_msg[- 17 - k] = c8_test
                 msg = bytes(test2_msg)
