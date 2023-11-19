@@ -126,14 +126,13 @@ for i in range(len(msg)):
                         print("Byte: ", bytearray(result.encode())[-k])
                         print("P2'' : ", (i+2))
                         print("C8 Test: ", c8_test)
-                        msg = bytearray(msg)
-                        msg[- 17 - k] = c8_test
-                        msg = bytes(msg)
+                        test2_msg = bytearray(msg)
+                        test2_msg[- 17 - k] = c8_test
+                        msg = bytes(test2_msg)
 
                 # Append the final result outside the loop
-                result += chr(og_message)
 
-                print("New Message: " , msg)
+                print("New Message: ", binascii.hexlify(msg))
                 #print("Len MSG: ", len(msg))
                 # Man muss den Cyphertext anpassen
                 print("Succesful ", chr(og_message))
@@ -151,10 +150,9 @@ for i in range(len(msg)):
 
         for k in range(i + 1):
             if i == 0:
-
                 c8_two = found_same ^ (k + 1) ^ (i + 2)
                 print("k: ", k)
-                print("Byte: ", bytearray(result.encode())[ - k])
+                print("Byte: ", bytearray(result.encode())[-k])
                 print("P2'' : ", (i + 2))
                 print("C8 Test: ", c8_two)
 
@@ -163,14 +161,14 @@ for i in range(len(msg)):
                 msg = bytes(test2_msg)
             else:
 
-                c8_test = bytearray(result.encode())[- k] ^ (i + 2)
-                msg = bytearray(msg)
-                msg[- 17 - k] = c8_test
-                msg = bytes(msg)
+                c8_test = bytearray(result.encode())[-k] ^ (i + 2)
+                test2_msg = bytearray(msg)
+                test2_msg[- 17 - k] = c8_test
+                msg = bytes(test2_msg)
 
         # Append the final result outside the loop
 
-        print("New Message: ", msg)
+        print("New Message: ", binascii.hexlify(msg))
         # print("Len MSG: ", len(msg))
         # Man muss den Cyphertext anpassen
         print("Succesful ", chr(og_message))
