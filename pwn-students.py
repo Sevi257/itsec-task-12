@@ -28,10 +28,9 @@ def read_until(s, token):
 # Connect multiple times to decrypt the (IV, msg) pair above byte by byte.
 print(len(msg))
 result = ""
+found_same = -1
 for i in range(len(msg)):
     found = False
-    found_same = -1
-
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
     #s.connect(("localhost", 1024))
@@ -39,7 +38,18 @@ for i in range(len(msg)):
     ########################################
     # Implement padding oracle attack here #
     ########################################
+    # iv erst am Ende verändern
+    # shifte msg um 5 bytes nach links und füge den wert hinzu mit brute force
+    # msg slicen und am ende
+    # extract the encrypted message
+    # The string containing the encrypted message and IV
 
+    # Anfangen beim 15. Byte
+    # 16 Byte Block Länge
+    # Extend indem man den letzten Block einfach abschneidet
+    # P12 = 0x01 xor C8 (ursprüngliches Byte encrypted) xor C'8 (bruteforced byte for 0x01)
+    # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
+    # P11 = 0x02 xor C7' xor C7 og
     if i == 0:
         pattern = re.compile(r'IV was (.+?)\)\n\n', re.DOTALL)
 
@@ -61,6 +71,10 @@ for i in range(len(msg)):
 
         read_until(s, b"Do you")
         test_msg = bytearray(msg)
+        #print("Test_msg: ", binascii.hexlify(test_msg))
+        # Hier wird das i-letzte Byte gebruteforced
+        # We pass C1' + C2 to the server. If the server says we have produced a plaintext with valid padding,
+        # Konkateniere die beiden Blöcke C1' und C2
         test_msg[-i-17] = j
        # print("New Test_msg: ", binascii.hexlify(test_msg))
         # TODO -> Wieso nochmal xor eigentlich? Doch stimmt ich schicke ja nur final message des wird dann serverside bearbeitet und dann ist padding correct aber ich brauche j
@@ -69,6 +83,7 @@ for i in range(len(msg)):
             final_msg = final_msg[:-16]
         if i >= 32:
             final_msg = final_msg[:-16]
+        #print("Final Message: ", binascii.hexlify(final_msg))
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
         response = read_until(s, b"\n")
@@ -82,12 +97,26 @@ for i in range(len(msg)):
                 print("Same Same")
             else:
                 found = True
+                #print("Hello")
+                #man muss xoren und c8 wird einfach zu dem Index in der encrypted message
                 c8_ = j
                 og_cipher_byte = bytes.fromhex(encrypted_message)[-17-i]
                 print("C8_       : ", hex(c8_))
                 print("OG Cypher : ", og_cipher_byte)
-                og_message = (i+1) ^ c8_
+                # P12 vielleicht muss die 1 noch mit Nullen davor sein
+                # Nicht mit sich selbst xoren sondern mit Nullen
+                # weil c8 muss ja an die richtige stelle
+                og_message = (i+1) ^ c8_ # ^ og_cipher_byte
                 result += chr(og_message)
+
+                # Vielleicht muss man des anders machen und mit Nullen auffüllen also z.B. 0x02
+                # Nach der ersten Runde muss halt dann angepasst werden also der Nachrichtenstring für i + 1
+                # check out if it really comes out to 0x01 and not the real padding
+                # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
+                # Man muss C8'' noch anpassen dann immer
+                # Einerseits kann man wirklich nur auf Bytes arbeiten
+                # auch dass i+1 to bytes noch der Länge anpassen oder halt einfach da bei der Message einfügen
+                #dann mit einem for loop jedes Byte anpassen
                 for k in range(i + 1):
                     if i == 0:
                         c8_two = j ^ (k + 1) ^ (i + 2)
@@ -119,6 +148,7 @@ for i in range(len(msg)):
         for k in range(i + 1):
             if i == 0:
                 c8_two = found_same ^ (k + 1) ^ (i + 2)
+
                 test2_msg = bytearray(msg)
                 test2_msg[- 17 - i] = c8_two
                 msg = bytes(test2_msg)
