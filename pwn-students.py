@@ -122,10 +122,7 @@ for i in range(len(msg)):
                     else:
                         # Brauche das orginalByte nicht das aus der msg
                         c8_test = bytearray(result.encode())[- k] ^ (i + 2)
-                        print("k: ", k)
-                        print("Byte: ", bytearray(result.encode())[-k])
-                        print("P2'' : ", (i+2))
-                        print("C8 Test: ", c8_test)
+                        print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
                         test2_msg = bytearray(msg)
                         test2_msg[- 17 - k] = c8_test
                         msg = bytes(test2_msg)
@@ -160,8 +157,8 @@ for i in range(len(msg)):
                 test2_msg[- 17 - i] = c8_two
                 msg = bytes(test2_msg)
             else:
-
                 c8_test = bytearray(result.encode())[-k] ^ (i + 2)
+                print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
                 test2_msg = bytearray(msg)
                 test2_msg[- 17 - k] = c8_test
                 msg = bytes(test2_msg)
