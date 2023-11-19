@@ -73,7 +73,6 @@ for i in range(len(msg)):
             final_msg = final_msg[:-16]
         if i >= 32:
             final_msg = final_msg[:-16]
-        print("Final Message: ", binascii.hexlify(final_msg))
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
         response = read_until(s, b"\n")
