@@ -70,15 +70,15 @@ for i in range(len(msg)):
             else:
                 found = True
                 og_message = (i+1) ^ j
+                c8_test = j
                 result += chr(og_message)
-
-                for k in range(i + 1):
-                    if i == 0:
-                        c8_two = j ^ (k + 1) ^ (i + 2)
-                        test2_msg = bytearray(msg)
-                        test2_msg[- 17 - i] = c8_two
-                        msg = bytes(test2_msg)
-                    else:
+                if i == 0:
+                    c8_two = j ^ 1 ^ (i + 2)
+                    test2_msg = bytearray(msg)
+                    test2_msg[- 17 - i] = c8_two
+                    msg = bytes(test2_msg)
+                else:
+                    for k in range(1, i + 1):
                         c8_test = bytearray(result.encode())[- k] ^ (i + 2)
                         print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
                         test2_msg = bytearray(msg)
@@ -96,15 +96,15 @@ for i in range(len(msg)):
         c8_ = found_same
         og_message = (i + 1) ^ c8_
         result += chr(og_message)
-
-        for k in range(i + 1):
-            if i == 0:
-                c8_two = found_same ^ (k + 1) ^ (i + 2)
-                test2_msg = bytearray(msg)
-                test2_msg[- 17 - i] = c8_two
-                msg = bytes(test2_msg)
-            else:
+        if i == 0:
+            c8_two = found_same ^ 1 ^ (i + 2)
+            test2_msg = bytearray(msg)
+            test2_msg[- 17 - i] = c8_two
+            msg = bytes(test2_msg)
+        else:
+            for k in range(i + 1):
                 #Bei Result wird falsch geaccesed
+                # Muss so angepasst werden dass des Ergebnis 0x02 ist
                 c8_test = bytearray(result.encode())[-k] ^ (i + 2)
                 print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
                 test2_msg = bytearray(msg)
