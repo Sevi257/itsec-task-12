@@ -29,6 +29,8 @@ def read_until(s, token):
 print(len(msg))
 result = ""
 for i in range(len(msg)):
+    found = False
+    found_same = -1
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
     #s.connect(("localhost", 1024))
@@ -70,14 +72,15 @@ for i in range(len(msg)):
         test_msg = bytearray(msg)
         #print("Test_msg: ", binascii.hexlify(test_msg))
         # Hier wird das i-letzte Byte gebruteforced
-        test_msg[len(test_msg) - i - 16] = j
+        # We pass C1' + C2 to the server. If the server says we have produced a plaintext with valid padding,
+        # Konkateniere die beiden Blöcke C1' und C2
+        test_msg[- i - 17] = j
        # print("New Test_msg: ", binascii.hexlify(test_msg))
         # TODO -> Wieso nochmal xor eigentlich? Doch stimmt ich schicke ja nur final message des wird dann serverside bearbeitet und dann ist padding correct aber ich brauche j
-
         final_msg = bytes(a ^ b for a, b in zip(test_msg, binascii.unhexlify(encrypted_message)))
-        #print("Final message sent: ", binascii.hexlify(final_msg))
-        #print("Encrypted message : ", encrypted_message)
-        #print("Test Message test : ", binascii.hexlify(test_msg))
+        print("Final message sent: ", binascii.hexlify(final_msg))
+        print("Encrypted message : ", encrypted_message)
+        print("Test Message test : ", binascii.hexlify(test_msg))
         #print("Final Message: ", binascii.hexlify(final_msg))
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
@@ -88,12 +91,14 @@ for i in range(len(msg)):
             # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
             # c8_ = c'8 ; encrypted_msg[15-i] = c8 ; hexformat of i
             if encrypted_message == binascii.hexlify(final_msg).decode():
+                found_same = j
                 print("Same Same")
             else:
+                found = True
                 #print("Hello")
                 #man muss xoren und c8 wird einfach zu dem Index in der encrypted message
                 c8_ = j
-                og_cipher_byte = bytes.fromhex(encrypted_message)[len(encrypted_message)//2-16-i]
+                og_cipher_byte = bytes.fromhex(encrypted_message)[-17-i]
                 print("C8_       : ", hex(c8_))
                 print("OG Cypher : ", og_cipher_byte)
                 # P12 vielleicht muss die 1 noch mit Nullen davor sein
@@ -120,12 +125,12 @@ for i in range(len(msg)):
                         #print("C82: ", c8_two)
                         result += chr(og_message)
                         test2_msg = bytearray(msg)
-                        test2_msg[len(test2_msg) - 16 - i] = c8_two
+                        test2_msg[- 17 - i] = c8_two
                         msg = bytes(test2_msg)
                     else:
-                        c8_test = bytearray(msg)[len(msg)-16-k] ^ (i+1) ^ (i+2)
+                        c8_test = bytearray(msg)[-17-k] ^ (i+1) ^ (i+2)
                         msg = bytearray(msg)
-                        msg[len(msg)-16-k] = c8_test
+                        msg[-17-k] = c8_test
                         msg = bytes(msg)
 
                 print("New Message: " , msg)
@@ -133,4 +138,32 @@ for i in range(len(msg)):
                 # Man muss den Cyphertext anpassen
                 print("Succesful ", og_message)
                 break
+    if not found:
+        # Das Padding ist richtig
+        found = True
+        c8_ = found_same
+        og_cipher_byte = bytes.fromhex(encrypted_message)[-17 - i]
+        print("C8_       : ", hex(c8_))
+        print("OG Cypher : ", og_cipher_byte)
+        #C8_ ist das gebruteforced byte und og_cipher_byte ist das ursprüngliche byte
+        og_message = (i + 1) ^ c8_ ^ og_cipher_byte
+        for k in range(i + 1):
+            if i == 0:
+                c8_two = found_same ^ (i + 1) ^ (i + 2)
+                # print("C82: ", c8_two)
+                result += chr(og_message)
+                test2_msg = bytearray(msg)
+                test2_msg[- 17 - i] = c8_two
+                msg = bytes(test2_msg)
+            else:
+                c8_test = bytearray(msg)[- 17 - k] ^ (i + 1) ^ (i + 2)
+                msg = bytearray(msg)
+                msg[- 17 - k] = c8_test
+                msg = bytes(msg)
+
+        print("New Message: ", msg)
+        # print("Len MSG: ", len(msg))
+        # Man muss den Cyphertext anpassen
+        print("Succesful ", og_message)
+
     print("Result: ", result)
