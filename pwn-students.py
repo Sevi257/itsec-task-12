@@ -118,7 +118,8 @@ for i in range(len(msg)):
                         test2_msg[- 17 - i] = c8_two
                         msg = bytes(test2_msg)
                     else:
-                        c8_test = bytearray(msg)[- 17 - k] ^ (k + 1) ^ (i + 2)
+                        # Brauche das orginalByte nicht das aus der msg
+                        c8_test = bytearray(result)[- k] ^ (k + 1) ^ (i + 2)
                         print("k: ", k)
                         print("Byte: ", bytearray(msg)[-17-k])
                         print("P2'' : ", (i+2))
@@ -158,7 +159,7 @@ for i in range(len(msg)):
                 msg = bytes(test2_msg)
             else:
 
-                c8_test = bytearray(msg)[- 17 - k] ^ (k + 1) ^ (i + 2)
+                c8_test = bytearray(result)[- k] ^ (k + 1) ^ (i + 2)
                 msg = bytearray(msg)
                 msg[- 17 - k] = c8_test
                 msg = bytes(msg)
