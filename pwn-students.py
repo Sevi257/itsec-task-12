@@ -28,9 +28,10 @@ def read_until(s, token):
 # Connect multiple times to decrypt the (IV, msg) pair above byte by byte.
 print(len(msg))
 result = ""
-found_same = -1
 for i in range(len(msg)):
     found = False
+    found_same = -1
+
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
     #s.connect(("localhost", 1024))
@@ -38,18 +39,7 @@ for i in range(len(msg)):
     ########################################
     # Implement padding oracle attack here #
     ########################################
-    # iv erst am Ende verändern
-    # shifte msg um 5 bytes nach links und füge den wert hinzu mit brute force
-    # msg slicen und am ende
-    # extract the encrypted message
-    # The string containing the encrypted message and IV
 
-    # Anfangen beim 15. Byte
-    # 16 Byte Block Länge
-    # Extend indem man den letzten Block einfach abschneidet
-    # P12 = 0x01 xor C8 (ursprüngliches Byte encrypted) xor C'8 (bruteforced byte for 0x01)
-    # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
-    # P11 = 0x02 xor C7' xor C7 og
     if i == 0:
         pattern = re.compile(r'IV was (.+?)\)\n\n', re.DOTALL)
 
@@ -142,20 +132,12 @@ for i in range(len(msg)):
         # Das Padding ist richtig
         found = True
         c8_ = found_same
-        og_cipher_byte = bytes.fromhex(encrypted_message)[-17 - i]
-        print("C8_       : ", hex(c8_))
-        print("OG Cypher : ", og_cipher_byte)
         og_message = (i + 1) ^ c8_
         result += chr(og_message)
 
         for k in range(i + 1):
             if i == 0:
                 c8_two = found_same ^ (k + 1) ^ (i + 2)
-                print("k: ", k)
-                print("Byte: ", bytearray(result.encode())[-k])
-                print("P2'' : ", (i + 2))
-                print("C8 Test: ", c8_two)
-
                 test2_msg = bytearray(msg)
                 test2_msg[- 17 - i] = c8_two
                 msg = bytes(test2_msg)
@@ -176,3 +158,4 @@ for i in range(len(msg)):
     print("Result: ", result)
 
 #Es wird gar nix gefunden weil ich etwas beim Padding umrechnen im k loop falsch mache
+# Alles abschneiden bei i == 16
