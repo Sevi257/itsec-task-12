@@ -55,7 +55,7 @@ for i in range(len(msg)):
         #s.connect(("localhost", 1024))
 
         read_until(s, b"Do you")
-        final_msg = bytearray(msg)
+        final_msg = bytearray(msg.encode())
        # print("New Test_msg: ", binascii.hexlify(test_msg))
         final_msg[-i-17] ^= j
         if i >= 16:
@@ -78,11 +78,11 @@ for i in range(len(msg)):
                 for k in range(i + 1):
                     if i == 0:
                         c8_two = j ^ (k + 1) ^ (i + 2)
-                        bytearray(msg)[- 17 - i] = c8_two
+                        bytearray(msg.encode())[- 17 - i] = c8_two
                     else:
                         c8_test = bytearray(result.encode())[- k] ^ (i + 2)
                         print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
-                        bytearray(msg)[- 17 - k] = c8_test
+                        bytearray(msg.encode())[- 17 - k] = c8_test
 
                 # Append the final result outside the loop
 
@@ -101,11 +101,11 @@ for i in range(len(msg)):
         for k in range(i + 1):
             if i == 0:
                 c8_two = found_same ^ (k + 1) ^ (i + 2)
-                bytearray(msg)[- 17 - i] = c8_two
+                bytearray(msg.encode())[- 17 - i] = c8_two
             else:
                 c8_test = bytearray(result.encode())[-k] ^ (i + 2)
                 print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
-                bytearray(msg)[- 17 - k] = c8_test
+                bytearray(msg.encode())[- 17 - k] = c8_test
 
         # Append the final result outside the loop
 
