@@ -78,9 +78,7 @@ for i in range(len(msg)):
        # print("New Test_msg: ", binascii.hexlify(test_msg))
         # TODO -> Wieso nochmal xor eigentlich? Doch stimmt ich schicke ja nur final message des wird dann serverside bearbeitet und dann ist padding correct aber ich brauche j
         final_msg = bytes(a ^ b for a, b in zip(test_msg, binascii.unhexlify(encrypted_message)))
-        print("Final message sent: ", binascii.hexlify(final_msg))
-        print("Encrypted message : ", encrypted_message)
-        print("Test Message test : ", binascii.hexlify(test_msg))
+
         #print("Final Message: ", binascii.hexlify(final_msg))
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
@@ -136,7 +134,7 @@ for i in range(len(msg)):
                 print("New Message: " , msg)
                 #print("Len MSG: ", len(msg))
                 # Man muss den Cyphertext anpassen
-                print("Succesful ", og_message)
+                print("Succesful ", chr(og_message))
                 break
     if not found:
         # Das Padding ist richtig
@@ -164,6 +162,6 @@ for i in range(len(msg)):
         print("New Message: ", msg)
         # print("Len MSG: ", len(msg))
         # Man muss den Cyphertext anpassen
-        print("Succesful ", og_message)
+        print("Succesful ", chr(og_message))
 
     print("Result: ", result)
