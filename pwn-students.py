@@ -61,10 +61,6 @@ for i in range(len(msg)):
 
         read_until(s, b"Do you")
         test_msg = bytearray(msg)
-        #print("Test_msg: ", binascii.hexlify(test_msg))
-        # Hier wird das i-letzte Byte gebruteforced
-        # We pass C1' + C2 to the server. If the server says we have produced a plaintext with valid padding,
-        # Konkateniere die beiden Blöcke C1' und C2
         test_msg[-i-17] = j
        # print("New Test_msg: ", binascii.hexlify(test_msg))
         # TODO -> Wieso nochmal xor eigentlich? Doch stimmt ich schicke ja nur final message des wird dann serverside bearbeitet und dann ist padding correct aber ich brauche j
@@ -90,20 +86,8 @@ for i in range(len(msg)):
                 og_cipher_byte = bytes.fromhex(encrypted_message)[-17-i]
                 print("C8_       : ", hex(c8_))
                 print("OG Cypher : ", og_cipher_byte)
-                # P12 vielleicht muss die 1 noch mit Nullen davor sein
-                # Nicht mit sich selbst xoren sondern mit Nullen
-                # weil c8 muss ja an die richtige stelle
                 og_message = (i+1) ^ c8_
                 result += chr(og_message)
-
-                # Vielleicht muss man des anders machen und mit Nullen auffüllen also z.B. 0x02
-                # Nach der ersten Runde muss halt dann angepasst werden also der Nachrichtenstring für i + 1
-                # check out if it really comes out to 0x01 and not the real padding
-                # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
-                # Man muss C8'' noch anpassen dann immer
-                # Einerseits kann man wirklich nur auf Bytes arbeiten
-                # auch dass i+1 to bytes noch der Länge anpassen oder halt einfach da bei der Message einfügen
-                #dann mit einem for loop jedes Byte anpassen
                 for k in range(i + 1):
                     if i == 0:
                         c8_two = j ^ (k + 1) ^ (i + 2)
