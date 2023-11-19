@@ -46,9 +46,6 @@ for i in range(len(msg)):
         bytes_cipher = binascii.unhexlify(encrypted_message)
         msg = encrypted_message
 
-    # Hier die Variable für den Loop
-    # C'i-1 = Ci-1 ⊕ 00000001 ⊕ 0000000X | Ci
-
     for j in range(256):
         s = socket.socket()
         s.connect(("itsec.sec.in.tum.de", 7023))
@@ -56,13 +53,11 @@ for i in range(len(msg)):
 
         read_until(s, b"Do you")
         final_msg = bytearray(msg.encode())
-       # print("New Test_msg: ", binascii.hexlify(test_msg))
         final_msg[-i-17] ^= j
         if i >= 16:
             final_msg = final_msg[:-16]
         if i >= 32:
             final_msg = final_msg[:-16]
-        #print("Final Message: ", binascii.hexlify(final_msg))
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
         response = read_until(s, b"\n")
@@ -86,7 +81,7 @@ for i in range(len(msg)):
 
                 # Append the final result outside the loop
 
-                print("New Message: ", binascii.hexlify(msg))
+                print("New Message: ", msg)
                 #print("Len MSG: ", len(msg))
                 # Man muss den Cyphertext anpassen
                 print("Succesful ", chr(og_message))
@@ -109,7 +104,7 @@ for i in range(len(msg)):
 
         # Append the final result outside the loop
 
-        print("New Message: ", binascii.hexlify(msg))
+        print("New Message: ", msg)
         # print("Len MSG: ", len(msg))
         # Man muss den Cyphertext anpassen
         print("Succesful ", chr(og_message))
