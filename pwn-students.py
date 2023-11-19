@@ -50,7 +50,7 @@ for i in range(len(msg)):
         s = socket.socket()
         s.connect(("itsec.sec.in.tum.de", 7023))
         #s.connect(("localhost", 1024))
-
+        print("Connected")
         read_until(s, b"Do you")
         final_msg = bytearray(msg.encode())
         final_msg[-i-17] ^= j
