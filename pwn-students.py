@@ -60,6 +60,7 @@ for i in range(len(msg)):
         bytes_cipher = binascii.unhexlify(encrypted_message)
         print(len(bytes_cipher))
         test_msg = msg
+
     # Hier die Variable für den Loop
     # C'i-1 = Ci-1 ⊕ 00000001 ⊕ 0000000X | Ci
 
@@ -78,7 +79,10 @@ for i in range(len(msg)):
        # print("New Test_msg: ", binascii.hexlify(test_msg))
         # TODO -> Wieso nochmal xor eigentlich? Doch stimmt ich schicke ja nur final message des wird dann serverside bearbeitet und dann ist padding correct aber ich brauche j
         final_msg = bytes(a ^ b for a, b in zip(test_msg, binascii.unhexlify(encrypted_message)))
-
+        if i >= 16:
+            final_msg = final_msg[:-16]
+        if i >= 32:
+            final_msg = final_msg[:-16]
         #print("Final Message: ", binascii.hexlify(final_msg))
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
@@ -141,8 +145,7 @@ for i in range(len(msg)):
         og_cipher_byte = bytes.fromhex(encrypted_message)[-17 - i]
         print("C8_       : ", hex(c8_))
         print("OG Cypher : ", og_cipher_byte)
-        #C8_ ist das gebruteforced byte und og_cipher_byte ist das ursprüngliche byte
-        og_message = (i + 1) ^ c8_ # ^ og_cipher_byte
+        og_message = (i + 1) ^ c8_
         result += chr(og_message)
 
         for k in range(i + 1):
