@@ -47,9 +47,6 @@ for i in range(len(msg)):
         print(len(bytes_cipher))
         test_msg = msg
 
-    # Hier die Variable für den Loop
-    # C'i-1 = Ci-1 ⊕ 00000001 ⊕ 0000000X | Ci
-
     for j in range(256):
         s = socket.socket()
         s.connect(("itsec.sec.in.tum.de", 7023))
@@ -58,30 +55,21 @@ for i in range(len(msg)):
         read_until(s, b"Do you")
         test_msg = bytearray(msg)
         test_msg[-i-17] = j
-       # print("New Test_msg: ", binascii.hexlify(test_msg))
         final_msg = bytearray(a ^ b for a, b in zip(test_msg, binascii.unhexlify(encrypted_message)))
         if i >= 16:
             final_msg = final_msg[:-16]
         if i >= 32:
             final_msg = final_msg[:-16]
-        #print("Final Message: ", binascii.hexlify(final_msg))
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
         response = read_until(s, b"\n")
         if "Bad" not in str(response):
-            # Jetzt haben wir C'8 herausgefunden
-            # P12 = 0x01 xor C8 (ursprüngliches Byte encrypted) xor C'8 (bruteforced byte for 0x01)
-            # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
-            # c8_ = c'8 ; encrypted_msg[15-i] = c8 ; hexformat of i
             if encrypted_message == binascii.hexlify(final_msg).decode():
                 found_same = j
                 print("Same Same")
             else:
+                print("Array: " ,bytearray(result.encode()))
                 found = True
-                #print("Hello")
-                #man muss xoren und c8 wird einfach zu dem Index in der encrypted message
-                og_cipher_byte = bytes.fromhex(encrypted_message)[-17-i]
-                print("OG Cypher : ", og_cipher_byte)
                 og_message = (i+1) ^ j
                 result += chr(og_message)
 
@@ -101,8 +89,6 @@ for i in range(len(msg)):
                 # Append the final result outside the loop
 
                 print("New Message: ", binascii.hexlify(msg))
-                #print("Len MSG: ", len(msg))
-                # Man muss den Cyphertext anpassen
                 print("Succesful ", chr(og_message))
                 break
     if not found:
@@ -119,6 +105,7 @@ for i in range(len(msg)):
                 test2_msg[- 17 - i] = c8_two
                 msg = bytes(test2_msg)
             else:
+                #Bei Result wird falsch geaccesed
                 c8_test = bytearray(result.encode())[-k] ^ (i + 2)
                 print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
                 test2_msg = bytearray(msg)
@@ -133,6 +120,3 @@ for i in range(len(msg)):
         print("Succesful ", chr(og_message))
 
     print("Result: ", result)
-
-#Es wird gar nix gefunden weil ich etwas beim Padding umrechnen im k loop falsch mache
-# Alles abschneiden bei i == 16
