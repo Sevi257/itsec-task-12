@@ -56,10 +56,9 @@ for i in range(len(msg)):
         #s.connect(("localhost", 1024))
 
         read_until(s, b"Do you")
-        test_msg = bytearray(msg)
-        test_msg[-i-17] = j
+        final_msg = bytearray(encrypted_message)
        # print("New Test_msg: ", binascii.hexlify(test_msg))
-        final_msg = bytearray(a ^ b for a, b in zip(test_msg, binascii.unhexlify(encrypted_message)))
+        final_msg[-i-17] ^= j
         if i >= 16:
             final_msg = final_msg[:-16]
         if i >= 32:
@@ -69,10 +68,6 @@ for i in range(len(msg)):
         s.send(binascii.hexlify(final_msg) + b"\n")
         response = read_until(s, b"\n")
         if "Bad" not in str(response):
-            # Jetzt haben wir C'8 herausgefunden
-            # P12 = 0x01 xor C8 (ursprüngliches Byte encrypted) xor C'8 (bruteforced byte for 0x01)
-            # C8'' for 0x02 = C8 xor P12 xor 0x02 (variable)
-            # c8_ = c'8 ; encrypted_msg[15-i] = c8 ; hexformat of i
             if encrypted_message == binascii.hexlify(final_msg).decode():
                 found_same = j
                 print("Same Same")
