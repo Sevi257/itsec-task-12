@@ -28,9 +28,9 @@ def read_until(s, token):
 # Connect multiple times to decrypt the (IV, msg) pair above byte by byte.
 print(len(msg))
 result = ""
+found_same = -1
 for i in range(len(msg)):
     found = False
-    found_same = -1
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
     #s.connect(("localhost", 1024))
