@@ -103,6 +103,8 @@ for i in range(len(msg)):
                 # Nicht mit sich selbst xoren sondern mit Nullen
                 # weil c8 muss ja an die richtige stelle
                 og_message = (i+1) ^ c8_ # ^ og_cipher_byte
+                result += chr(og_message)
+
                 # Vielleicht muss man des anders machen und mit Nullen auffüllen also z.B. 0x02
                 # Nach der ersten Runde muss halt dann angepasst werden also der Nachrichtenstring für i + 1
                 # check out if it really comes out to 0x01 and not the real padding
@@ -145,6 +147,8 @@ for i in range(len(msg)):
         print("OG Cypher : ", og_cipher_byte)
         #C8_ ist das gebruteforced byte und og_cipher_byte ist das ursprüngliche byte
         og_message = (i + 1) ^ c8_ # ^ og_cipher_byte
+        result += chr(og_message)
+
         for k in range(i + 1):
             if i == 0:
 
@@ -165,7 +169,6 @@ for i in range(len(msg)):
                 msg = bytes(msg)
 
         # Append the final result outside the loop
-        result += chr(og_message)
 
         print("New Message: ", msg)
         # print("Len MSG: ", len(msg))
