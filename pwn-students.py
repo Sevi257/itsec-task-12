@@ -102,7 +102,7 @@ for i in range(len(msg)):
                 # P12 vielleicht muss die 1 noch mit Nullen davor sein
                 # Nicht mit sich selbst xoren sondern mit Nullen
                 # weil c8 muss ja an die richtige stelle
-                og_message = (i+1) ^ c8_ ^ og_cipher_byte
+                og_message = (i+1) ^ c8_ # ^ og_cipher_byte
                 # Vielleicht muss man des anders machen und mit Nullen auffüllen also z.B. 0x02
                 # Nach der ersten Runde muss halt dann angepasst werden also der Nachrichtenstring für i + 1
                 # check out if it really comes out to 0x01 and not the real padding
@@ -111,25 +111,24 @@ for i in range(len(msg)):
                 # Einerseits kann man wirklich nur auf Bytes arbeiten
                 # auch dass i+1 to bytes noch der Länge anpassen oder halt einfach da bei der Message einfügen
                 #dann mit einem for loop jedes Byte anpassen
-                for k in range(i+1):
-                    # Man muss die alten Bytes rausziehen und nochmal mit i xoren
-                    # X[15] = P’1[15] ⊕ C2[15] ⊕ P3[15] = 0x02 ⊕ C2[15] ⊕ P3[15] where C2[15] et P3[15] are known
-                    # Ich muss jedes Byte aus der Message xoren mit dem zugehörigen Klartext aus dem Result array
-                    # und zusätzlich noch mit dem i und dann zurückschreiben
-                    # nehme das erste Byte von hinten aus dem msg-array
-                    # anstatt j nehme das k-te Byte von hinten
+                for k in range(i + 1):
                     if i == 0:
-                        c8_two = j ^ (i+1) ^ (i + 2)
-                        #print("C82: ", c8_two)
-                        result += chr(og_message)
+                        c8_two = j ^ (k + 1) ^ (i + 2)
                         test2_msg = bytearray(msg)
                         test2_msg[- 17 - i] = c8_two
                         msg = bytes(test2_msg)
                     else:
-                        c8_test = bytearray(msg)[-17-k] ^ (i+1) ^ (i+2)
+                        c8_test = bytearray(msg)[- 17 - k] ^ (k + 1) ^ (i + 2)
+                        print("k: ", k)
+                        print("Byte: ", bytearray(msg)[-17-k])
+                        print("P2'' : ", (i+2))
+                        print("C8 Test: ", c8_test)
                         msg = bytearray(msg)
-                        msg[-17-k] = c8_test
+                        msg[- 17 - k] = c8_test
                         msg = bytes(msg)
+
+                # Append the final result outside the loop
+                result += chr(og_message)
 
                 print("New Message: " , msg)
                 #print("Len MSG: ", len(msg))
@@ -144,20 +143,28 @@ for i in range(len(msg)):
         print("C8_       : ", hex(c8_))
         print("OG Cypher : ", og_cipher_byte)
         #C8_ ist das gebruteforced byte und og_cipher_byte ist das ursprüngliche byte
-        og_message = (i + 1) ^ c8_ ^ og_cipher_byte
+        og_message = (i + 1) ^ c8_ # ^ og_cipher_byte
         for k in range(i + 1):
             if i == 0:
-                c8_two = found_same ^ (i + 1) ^ (i + 2)
-                # print("C82: ", c8_two)
-                result += chr(og_message)
+
+                c8_two = found_same ^ (k + 1) ^ (i + 2)
+                print("k: ", k)
+                print("Byte: ", bytearray(msg)[-17 - k])
+                print("P2'' : ", (i + 2))
+                print("C8 Test: ", c8_two)
+
                 test2_msg = bytearray(msg)
                 test2_msg[- 17 - i] = c8_two
                 msg = bytes(test2_msg)
             else:
-                c8_test = bytearray(msg)[- 17 - k] ^ (i + 1) ^ (i + 2)
+
+                c8_test = bytearray(msg)[- 17 - k] ^ (k + 1) ^ (i + 2)
                 msg = bytearray(msg)
                 msg[- 17 - k] = c8_test
                 msg = bytes(msg)
+
+        # Append the final result outside the loop
+        result += chr(og_message)
 
         print("New Message: ", msg)
         # print("Len MSG: ", len(msg))
@@ -165,3 +172,5 @@ for i in range(len(msg)):
         print("Succesful ", chr(og_message))
 
     print("Result: ", result)
+
+#Es wird gar nix gefunden weil ich etwas beim Padding umrechnen im k loop falsch mache
