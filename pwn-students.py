@@ -1,11 +1,17 @@
 import binascii
 import re
 import socket
+import telnetlib
+
+# First take a look at the server. Afterwards, comment out the next four lines...
+# t = telnetlib.Telnet("itsec.sec.in.tum.de", 7023)
+# t.interact()
+# import sys
+# sys.exit(0)
 
 # If you have done that, copy over a hexlified message + IV over to this script (replacing the zeros)
 iv = binascii.unhexlify("0000000000000000000000000000000000000000000000000000000000000000")
-msg = binascii.unhexlify(
-    "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+msg = binascii.unhexlify("00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
 
 
 def read_until(s, token):
@@ -68,3 +74,5 @@ for i in range(len(msg)):
         print("No valid padding found for iteration", i)
 
 print("Result:", result)
+
+#Es wird gar nix gefunden weil ich etwas beim Padding umrechnen im k loop falsch mache
