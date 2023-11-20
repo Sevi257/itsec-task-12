@@ -66,11 +66,13 @@ while i < len(msg):
                 test_msg = bytearray(msg)
                 read_until(s, b"Do you")
                 test_msg[-i - 17] ^= j
-                print("TestMessage: ", test_msg)
+                print("TestMessage: ", binascii.hexlify(test_msg))
                 #Es werden die falschen bytes verxored
                 for k in range(i):
                     new_byte = result[k] ^ (i % 16 + 1)
+                    print("Gewählter Wert: ", result[k], " an der Stelle ", -17-k)
                     test_msg[-17 - k] ^= new_byte
+                    print()
                 #test_msg[-i - 17 - 1] = 0xFF
                 #test_msg[-i - 17 - 2] = 0xFF
                 for l in range(counter):
