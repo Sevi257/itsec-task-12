@@ -91,5 +91,8 @@ while i < len(msg):
                     break
     i += 1
 
-flag = "flag{" + "".join(format(char, '02x') for char in result[::-1])
-print(flag)
+f = "flag{"
+flag = ""
+for char in result:
+    flag = char + flag
+print(f + flag)
