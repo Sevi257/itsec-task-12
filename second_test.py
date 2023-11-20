@@ -57,7 +57,7 @@ while i < len(msg):
         bytes_cipher = binascii.unhexlify(encrypted_message)
         msg = binascii.unhexlify(encrypted_message)
     if i > 3 or counter != 0:
-        if i>= 39:
+        if i == 40:
             break
         for j in range(256):
             if (47 < (i%16 + 1) ^ j < 58) or (96 < (i%16 + 1) ^ j < 103):
@@ -69,15 +69,12 @@ while i < len(msg):
                     test_msg = test_msg[:-16]
                 test_msg[-(i%16) - 17] ^= j
                 for k in range(i):
-                    try:
-                        new_byte = result[k] ^ ((i%16) + 1)
-                        test_msg[-17 - k] ^= new_byte
-                    except Exception:
-                        print(f"K: {k}, Counter: {counter * 16}, length: {len(result)}")
+                    new_byte = result[k] ^ (i%16 + 1)
+                    test_msg[-17 - k] ^= new_byte
                 #test_msg[-i - 17 - 1] = 0xFF
                 #test_msg[-i - 17 - 2] = 0xFF
                 final_msg = test_msg
-                # print(binascii.hexlify(final_msg))
+                print(binascii.hexlify(final_msg))
 
                 s.send(binascii.hexlify(iv) + b"\n")
                 s.send(binascii.hexlify(final_msg) + b"\n")
