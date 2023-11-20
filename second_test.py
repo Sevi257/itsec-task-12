@@ -65,8 +65,6 @@ for i in range(len(msg)):
 
         for k in range(i):
             # Das Padding muss ja wieder 1 sein
-            if i >14 and k <3:
-                print(f"Length of result: {len(result)} and counter on i: {i} as well as blockcounter {blockcounter} and k {k} ")
             new_byte = result[k] ^ (i + 1 - (blockcounter*16))
             test_msg[-17 - k] ^= new_byte
         final_msg = test_msg
