@@ -75,8 +75,8 @@ while i < len(msg):
                         test_msg[-17 - k] ^= new_byte
                     except Exception:
                         print(f"K: {k}, Counter: {counter * 16}, length: {len(result)}")
-                test_msg[-i - 17 - 1] = 0xFF
-                test_msg[-i - 17 - 2] = 0xFF
+                #test_msg[-i - 17 - 1] = 0xFF
+                #test_msg[-i - 17 - 2] = 0xFF
                 final_msg = test_msg
                 # print(binascii.hexlify(final_msg))
 
