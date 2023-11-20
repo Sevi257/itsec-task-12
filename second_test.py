@@ -117,11 +117,11 @@ while i < len(msg):
     if i == 0:
         pattern = re.compile(r'IV was (.+?)\)\n\n', re.DOTALL)
         match = pattern.search(start.decode('utf-8'))
-        #iv = binascii.unhexlify(match.group(1))
+        iv = binascii.unhexlify(match.group(1))
         encrypted_message = start.split(b'\n')[1].decode('utf-8')
         encrypted_message = encrypted_message.split("(")[0].strip()
         bytes_cipher = binascii.unhexlify(encrypted_message)
-        #msg = binascii.unhexlify(encrypted_message)
+        msg = binascii.unhexlify(encrypted_message)
     if i > 3 or counter != 0:
         if len(result) >= 40:
             break
