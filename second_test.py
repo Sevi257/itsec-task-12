@@ -30,6 +30,10 @@ def read_until(s, token):
 print(len(msg))
 print(len(iv))
 result = []
+result.append(1)
+result.append(10)
+result.append(10)
+result.append(125)
 hexlist = "0123456789abcdef"
 # An die erste Stelle im result array kommt auch das erste byte also immer appenden
 found_same = -1
