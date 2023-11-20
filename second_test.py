@@ -43,8 +43,8 @@ while i < len(msg):
         break
     s = socket.socket()
     print("I: ", i)
-    #s.connect(("itsec.sec.in.tum.de", 7023))
-    s.connect(("localhost", 1024))
+    s.connect(("itsec.sec.in.tum.de", 7023))
+    #s.connect(("localhost", 1024))
     start = read_until(s, b"Do you")
     ########################################
     if i == 0:
@@ -59,8 +59,8 @@ while i < len(msg):
     print(result)
     for j in range(256):
         s = socket.socket()
-        #s.connect(("itsec.sec.in.tum.de", 7023))
-        s.connect(("localhost", 1024))
+        s.connect(("itsec.sec.in.tum.de", 7023))
+        #s.connect(("localhost", 1024))
 
         read_until(s, b"Do you")
         test_msg = bytearray(msg)
