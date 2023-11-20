@@ -38,7 +38,6 @@ for i in range(len(msg)):
         blockcounter += 1
     if i > 48:
         break
-    found = False
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
     # s.connect(("localhost", 1024))
@@ -67,7 +66,7 @@ for i in range(len(msg)):
         for k in range(i):
             if i > 14:
                 print(f"K: {k} and result: {len(result)}")
-            new_byte = result[k] ^ (k + 1)
+            new_byte = result[k] ^ (i + 1)
             test_msg[-17 - k] ^= new_byte
         final_msg = test_msg
         if i >= 16:
