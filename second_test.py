@@ -83,7 +83,7 @@ for i in range(len(msg)):
         s.send(binascii.hexlify(final_msg) + b"\n")
         response = read_until(s, b"\n")
         if "Bad" not in str(response):
-            og_message = (i + 1) ^ j
+            og_message = (i + 1 -(blockcounter*16)) ^ j
             result.append(og_message)
 
             # Append the final result outside the loop
