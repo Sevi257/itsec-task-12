@@ -34,8 +34,7 @@ mhex = lambda x: binascii.hexlify(x).decode()
 async def handle_request(reader, writer):
     print("New connection")
     iv = os.urandom(16)
-    secret_msg = b'flag{28dcb365deb3760c68660697a0877e448338}'
-
+    secret_msg = b'flag{28dcb365deb3760c68660697a0877e448338}\n\n'
 
     padded_msg = pad_message(secret_msg)
 
