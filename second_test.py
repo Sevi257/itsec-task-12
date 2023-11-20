@@ -97,5 +97,9 @@ while i < len(msg):
                     break
     i += 1
 
-flag = "flag{" + "".join(chr(char) for char in result[::-1])
+fl = "flag{"
+flag = ""
+for char in result:
+    flag = format(char, '02x') + flag
+print(fl + str(bytes.fromhex(flag).decode('utf-8')))
 
