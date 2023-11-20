@@ -81,9 +81,9 @@ while i < len(msg):
                         print(f"K: {k}, Counter: {counter*16}, length: {len(result)}")
 
                 final_msg = test_msg
-                if 0 <= (-i - 17 - 1) < len(final_msg):
-                    final_msg[-i-17-1] = 0xFF
-                    final_msg[-i-17-2] = 0xFF
+                #if 0 <= (-i - 17 - 1) < len(final_msg):
+                final_msg[-i-(17*blockcounter)-1] = 0xFF
+                final_msg[-i-(17*blockcounter)-2] = 0xFF
                 print(binascii.hexlify(final_msg))
 
                 s.send(binascii.hexlify(iv) + b"\n")
