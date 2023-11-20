@@ -75,7 +75,7 @@ for i in range(len(msg)):
 
         final_msg[len(test_msg)-i-17-1] = 0xFF
         final_msg[len(test_msg)-i-17-2] = 0xFF
-        print(binascii.hexlify(final_msg))
+        #print(binascii.hexlify(final_msg))
 
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
