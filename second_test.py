@@ -60,19 +60,20 @@ while i < len(msg):
         if i == 40:
             break
         for j in range(256):
-            if (47 < (i%16 + 1) ^ j < 58) or (96 < (i%16 + 1) ^ j < 103):
+            if (47 < (i % 16 + 1) ^ j < 58) or (96 < (i % 16 + 1) ^ j < 103):
                 s = socket.socket()
                 s.connect(("itsec.sec.in.tum.de", 7023))
                 test_msg = bytearray(msg)
                 read_until(s, b"Do you")
-                for l in range(counter):
-                    test_msg = test_msg[:-16]
-                test_msg[-(i%16) - 17] ^= j
+                test_msg[-i - 17] ^= j
+                #Es werden die falschen bytes verxored
                 for k in range(i):
-                    new_byte = result[k] ^ (i%16 + 1)
+                    new_byte = result[k] ^ (i % 16 + 1)
                     test_msg[-17 - k] ^= new_byte
                 #test_msg[-i - 17 - 1] = 0xFF
                 #test_msg[-i - 17 - 2] = 0xFF
+                for l in range(counter):
+                    test_msg = test_msg[:-16]
                 final_msg = test_msg
                 print(binascii.hexlify(final_msg))
 
