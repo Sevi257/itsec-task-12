@@ -70,7 +70,6 @@ for i in range(len(msg)):
             final_msg = test_msg[:-17]
         if i >= 32:
             final_msg = test_msg[:-17]
-        print(final_msg)
 
         final_msg[-i - 17 - 1] = 0xFF
         final_msg[-i - 17 - 2] = 0xFF
