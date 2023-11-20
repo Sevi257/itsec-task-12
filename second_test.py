@@ -32,7 +32,7 @@ print(len(iv))
 result = []
 # An die erste Stelle im result array kommt auch das erste byte also immer appenden
 found_same = -1
-for block in range(1,4):
+for block in range(1, 4):
     for i in range(16):
         s = socket.socket()
         s.connect(("itsec.sec.in.tum.de", 7023))
@@ -66,7 +66,7 @@ for block in range(1,4):
             if block == 2:
                 final_msg = test_msg[:-16]
             if block == 3:
-                final_msg = test_msg[:-16]
+                final_msg = test_msg[:-32]
 
             final_msg[-i-17-1] = 0xFF
             final_msg[-i-17-2] = 0xFF
