@@ -47,7 +47,6 @@ while i < len(msg):
     if counter >= 3:
         break
     s = socket.socket()
-    print("I: ", i)
     s.connect(("itsec.sec.in.tum.de", 7023))
     #s.connect(("localhost", 1024))
     start = read_until(s, b"Do you")
@@ -89,14 +88,13 @@ while i < len(msg):
                 if "Bad" not in str(response):
                     og_message = (i + 1) ^ j
                     result.append(og_message)
-
+                    flag = ""
+                    for char in result:
+                        flag = chr(char) + flag
+                    flag = "flag{" + flag
+                    print(flag)
                     # Append the final result outside the loop
-                    print("Succesful ", chr(og_message))
                     break
 
     i += 1
-flag = ""
-for char in result:
-    flag = chr(char) + flag
-flag = "flag{" + flag
-print(flag)
+
