@@ -33,15 +33,18 @@ result = []
 # An die erste Stelle im result array kommt auch das erste byte also immer appenden
 found_same = -1
 blockcounter = 0
-for i in range(len(msg)):
-    if i == 16 or i == 32:
+i = 0
+counter = 0
+while i < len(msg):
+    if i == 16:
         i = 0
-        msg = msg[:-16]
-    if i > 48:
+        counter+=1
+    if counter >= 3:
         break
     s = socket.socket()
-    s.connect(("itsec.sec.in.tum.de", 7023))
-    # s.connect(("localhost", 1024))
+    print("I: ", i)
+    #s.connect(("itsec.sec.in.tum.de", 7023))
+    s.connect(("localhost", 1024))
     start = read_until(s, b"Do you")
     ########################################
     if i == 0:
@@ -56,17 +59,19 @@ for i in range(len(msg)):
     print(result)
     for j in range(256):
         s = socket.socket()
-        s.connect(("itsec.sec.in.tum.de", 7023))
-        # s.connect(("localhost", 1024))
+        #s.connect(("itsec.sec.in.tum.de", 7023))
+        s.connect(("localhost", 1024))
 
         read_until(s, b"Do you")
         test_msg = bytearray(msg)
+        for l in range(counter):
+            test_msg = test_msg[:-16]
         test_msg[-i - 17] ^= j
         # Change test_msg slightly
 
         for k in range(i):
             # Das Padding muss ja wieder 1 sein
-            new_byte = result[k] ^ (i + 1)
+            new_byte = result[k + counter*16] ^ (i + 1)
             test_msg[-17 - k] ^= new_byte
         final_msg = test_msg
 
