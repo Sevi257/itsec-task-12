@@ -45,8 +45,8 @@ while i < len(msg):
         i = 0
         counter += 1
     s = socket.socket()
-    #s.connect(("itsec.sec.in.tum.de", 7023))
-    s.connect(("localhost", 1024))
+    s.connect(("itsec.sec.in.tum.de", 7023))
+    # s.connect(("localhost", 1024))
     start = read_until(s, b"Do you")
     ########################################
     if i == 0:
@@ -63,9 +63,7 @@ while i < len(msg):
         for j in range(256):
             if (47 < (i + 1) ^ j < 58) or (96 < (i + 1) ^ j < 103):
                 s = socket.socket()
-                #s.connect(("itsec.sec.in.tum.de", 7023))
-                s.connect(("localhost", 1024))
-
+                s.connect(("itsec.sec.in.tum.de", 7023))
                 test_msg = bytearray(msg)
                 read_until(s, b"Do you")
                 for l in range(counter):
