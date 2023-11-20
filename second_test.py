@@ -91,6 +91,7 @@ while i < len(msg):
                     og_message = (i + 1) ^ j
                     result.append(og_message)
                     # Append the final result outside the loop
+                    print("Value: ", og_message)
                     break
     i += 1
 
