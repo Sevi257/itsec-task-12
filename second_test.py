@@ -41,9 +41,6 @@ blockcounter = 0
 i = 0
 counter = 0
 while i < len(msg):
-    if i == 16:
-        i = 0
-        counter += 1
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
     # s.connect(("localhost", 1024))
@@ -61,17 +58,17 @@ while i < len(msg):
         if len(result) >= 40:
             break
         for j in range(256):
-            if (47 < (i + 1) ^ j < 58) or (96 < (i + 1) ^ j < 103):
+            if (47 < (i%16 + 1) ^ j < 58) or (96 < (i%16 + 1) ^ j < 103):
                 s = socket.socket()
                 s.connect(("itsec.sec.in.tum.de", 7023))
                 test_msg = bytearray(msg)
                 read_until(s, b"Do you")
                 for l in range(counter):
                     test_msg = test_msg[:-16]
-                test_msg[-i - 17] ^= j
+                test_msg[-(i%16) - 17] ^= j
                 for k in range(i):
                     try:
-                        new_byte = result[k + counter * 16] ^ (i + 1)
+                        new_byte = result[k + counter * 16] ^ ((i%16) + 1)
                         test_msg[-17 - k] ^= new_byte
                     except Exception:
                         print(f"K: {k}, Counter: {counter * 16}, length: {len(result)}")
@@ -84,7 +81,7 @@ while i < len(msg):
                 s.send(binascii.hexlify(final_msg) + b"\n")
                 response = read_until(s, b"\n")
                 if "Bad" not in str(response):
-                    og_message = (i + 1) ^ j
+                    og_message = (i%16 + 1) ^ j
                     result.append(og_message)
                     print("Succes: ", chr(og_message))
                     # Append the final result outside the loop
