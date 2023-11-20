@@ -67,9 +67,9 @@ for i in range(len(msg)):
             test_msg[-17 - k] ^= new_byte
         final_msg = test_msg
         if i >= 16:
-            final_msg = test_msg[:-16]
+            final_msg = test_msg[:-17]
         if i >= 32:
-            final_msg = test_msg[:-16]
+            final_msg = test_msg[:-17]
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
         response = read_until(s, b"\n")
