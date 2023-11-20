@@ -114,7 +114,7 @@ while i < len(msg):
     # s.connect(("localhost", 1024))
     start = read_until(s, b"Do you")
     ########################################
-    if i == 0:
+    if i == 0 and counter == 0:
         pattern = re.compile(r'IV was (.+?)\)\n\n', re.DOTALL)
         match = pattern.search(start.decode('utf-8'))
         iv = binascii.unhexlify(match.group(1))
