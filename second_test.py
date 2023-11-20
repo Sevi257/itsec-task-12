@@ -32,7 +32,10 @@ print(len(iv))
 result = []
 # An die erste Stelle im result array kommt auch das erste byte also immer appenden
 found_same = -1
+blockcouter = 0
 for i in range(len(msg)):
+    if i > 15:
+        blockcouter += 1
     if i > 48:
         break
     found = False
@@ -66,12 +69,12 @@ for i in range(len(msg)):
             test_msg[-17 - k] ^= new_byte
         final_msg = test_msg
         if i >= 16:
-            final_msg = test_msg[:-17]
+            final_msg = test_msg[:-16]
         if i >= 32:
-            final_msg = test_msg[:-17]
+            final_msg = test_msg[:-16]
 
-        final_msg[-i - 17 - 1] = 0xFF
-        final_msg[-i - 17 - 2] = 0xFF
+        final_msg[-i - 17 - 1 + (blockcouter * 16)] = 0xFF
+        final_msg[-i - 17 - 2 + (blockcouter * 16)] = 0xFF
         print(binascii.hexlify(final_msg))
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
