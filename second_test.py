@@ -41,7 +41,7 @@ i = 0
 counter = 0
 while i < len(msg):
     if i == 16 or i == 32:
-        counter+=1
+        counter += 1
 
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
@@ -66,6 +66,7 @@ while i < len(msg):
                 test_msg = bytearray(msg)
                 read_until(s, b"Do you")
                 test_msg[-i - 17] ^= j
+                print("TestMessage: ", test_msg)
                 #Es werden die falschen bytes verxored
                 for k in range(i):
                     new_byte = result[k] ^ (i % 16 + 1)
