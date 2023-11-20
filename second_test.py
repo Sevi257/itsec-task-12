@@ -76,7 +76,7 @@ while i < len(msg):
                     test_msg = test_msg[:-16]
                 final_msg = test_msg
                 print(binascii.hexlify(final_msg))
-
+                print(result)
                 s.send(binascii.hexlify(iv) + b"\n")
                 s.send(binascii.hexlify(final_msg) + b"\n")
                 response = read_until(s, b"\n")
