@@ -67,7 +67,6 @@ while i < len(msg):
             if (47 < (i + 1) ^ j < 58) or (96 < (i + 1) ^ j < 103):
                 s = socket.socket()
                 s.connect(("itsec.sec.in.tum.de", 7023))
-                #s.connect(("localhost", 1024))
                 test_msg = bytearray(msg)
                 read_until(s, b"Do you")
                 for l in range(counter):
@@ -82,8 +81,7 @@ while i < len(msg):
                 test_msg[-i-17-1] = 0xFF
                 test_msg[-i-17-2] = 0xFF
                 final_msg = test_msg
-                #if 0 <= (-i - 17 - 1) < len(final_msg):
-                print(binascii.hexlify(final_msg))
+                #print(binascii.hexlify(final_msg))
 
                 s.send(binascii.hexlify(iv) + b"\n")
                 s.send(binascii.hexlify(final_msg) + b"\n")
