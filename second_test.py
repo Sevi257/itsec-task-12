@@ -94,5 +94,5 @@ while i < len(msg):
 f = "flag{"
 flag = ""
 for char in result:
-    flag = char + flag
+    flag = chr(char) + flag
 print(f + flag)
