@@ -68,7 +68,7 @@ while i < len(msg):
         test_msg[-17 - k] ^= new_byte
     if i > 3 or counter != 0:
         for j in range(256):
-            if chr((i+1) ^ j) in hexlist:
+            if (47 < (i + 1) ^ j < 58) or (96 < (i + 1) ^ j < 103)  :
                 s = socket.socket()
                 s.connect(("itsec.sec.in.tum.de", 7023))
                 #s.connect(("localhost", 1024))
