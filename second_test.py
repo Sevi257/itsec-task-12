@@ -29,11 +29,11 @@ def read_until(s, token):
 # Connect multiple times to decrypt the (IV, msg) pair above byte by byte.
 print(len(msg))
 print(len(iv))
-result = []
-result.append(1)
-result.append(10)
-result.append(10)
-result.append(125)
+result = [0]*40
+result[0] = 1
+result[1] = 10
+result[2] = 10
+result[3] = 125
 hexlist = "0123456789abcdef"
 # An die erste Stelle im result array kommt auch das erste byte also immer appenden
 found_same = -1
@@ -70,7 +70,7 @@ while i < len(msg):
                 test_msg[-(i%16) - 17] ^= j
                 for k in range(i):
                     try:
-                        new_byte = result[-(k+1)] ^ ((i%16) + 1)
+                        new_byte = result[k] ^ ((i%16) + 1)
                         test_msg[-17 - k] ^= new_byte
                     except Exception:
                         print(f"K: {k}, Counter: {counter * 16}, length: {len(result)}")
@@ -84,7 +84,7 @@ while i < len(msg):
                 response = read_until(s, b"\n")
                 if "Bad" not in str(response):
                     og_message = (i%16 + 1) ^ j
-                    result.append(og_message)
+                    result[i] = og_message
                     print("Succes: ", chr(og_message))
                     # Append the final result outside the loop
                     break
