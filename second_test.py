@@ -65,6 +65,8 @@ for i in range(len(msg)):
         # Change test_msg slightly
 
         for k in range(i):
+            if i > 14:
+                print(f"K: {k} and result: {len(result)}")
             new_byte = result[k] ^ (k + 1)
             test_msg[-17 - k] ^= new_byte
         final_msg = test_msg
