@@ -56,6 +56,7 @@ while i < len(msg):
         encrypted_message = encrypted_message.split("(")[0].strip()
         bytes_cipher = binascii.unhexlify(encrypted_message)
         msg = binascii.unhexlify(encrypted_message)
+        print(encrypted_message)
     if i > 3 or counter != 0:
         if i == 40:
             break
@@ -73,7 +74,6 @@ while i < len(msg):
                     if i >14:
                         print("Gewählter Wert: ", result[k], " an der Stelle ", -17-k)
                     test_msg[-17 - k] ^= new_byte
-                    print()
                 #test_msg[-i - 17 - 1] = 0xFF
                 #test_msg[-i - 17 - 2] = 0xFF
                 for l in range(counter):
