@@ -37,10 +37,12 @@ result.append(125)
 hexlist = "0123456789abcdef"
 # An die erste Stelle im result array kommt auch das erste byte also immer appenden
 found_same = -1
-blockcounter = 0
 i = 0
 counter = 0
 while i < len(msg):
+    if i == 16 or i == 32:
+        counter+=1
+
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
     # s.connect(("localhost", 1024))
