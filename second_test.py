@@ -30,6 +30,7 @@ def read_until(s, token):
 print(len(msg))
 print(len(iv))
 result = []
+hexlist = "0123456789abcdef"
 # An die erste Stelle im result array kommt auch das erste byte also immer appenden
 found_same = -1
 blockcounter = 0
@@ -55,40 +56,40 @@ while i < len(msg):
         encrypted_message = encrypted_message.split("(")[0].strip()
         bytes_cipher = binascii.unhexlify(encrypted_message)
         msg = binascii.unhexlify(encrypted_message)
+    test_msg = bytearray(msg)
 
-    print(result)
+    for k in range(i):
+        # Das Padding muss ja wieder 1 sein
+        new_byte = result[k + counter * 16] ^ (i + 1)
+        test_msg[-17 - k] ^= new_byte
     for j in range(256):
-        s = socket.socket()
-        s.connect(("itsec.sec.in.tum.de", 7023))
-        #s.connect(("localhost", 1024))
+        if chr((i+1) ^ j) in hexlist:
+            s = socket.socket()
+            s.connect(("itsec.sec.in.tum.de", 7023))
+            #s.connect(("localhost", 1024))
+            test_msg = bytearray(msg)
+            read_until(s, b"Do you")
+            for l in range(counter):
+                test_msg = test_msg[:-16]
+            test_msg[-i - 17] ^= j
+            # Change test_msg slightly
 
-        read_until(s, b"Do you")
-        test_msg = bytearray(msg)
-        for l in range(counter):
-            test_msg = test_msg[:-16]
-        test_msg[-i - 17] ^= j
-        # Change test_msg slightly
+            final_msg = test_msg
+            if 0 <= (-i - 17 - 1) < len(final_msg):
+                final_msg[-i-17-1] = 0xFF
+                final_msg[-i-17-2] = 0xFF
+            #print(binascii.hexlify(final_msg))
 
-        for k in range(i):
-            # Das Padding muss ja wieder 1 sein
-            new_byte = result[k + counter*16] ^ (i + 1)
-            test_msg[-17 - k] ^= new_byte
-        final_msg = test_msg
-        if 0 <= (-i - 17 - 1) < len(final_msg):
-            final_msg[-i-17-1] = 0xFF
-            final_msg[-i-17-2] = 0xFF
-        #print(binascii.hexlify(final_msg))
+            s.send(binascii.hexlify(iv) + b"\n")
+            s.send(binascii.hexlify(final_msg) + b"\n")
+            response = read_until(s, b"\n")
+            if "Bad" not in str(response):
+                og_message = (i + 1) ^ j
+                result.append(og_message)
 
-        s.send(binascii.hexlify(iv) + b"\n")
-        s.send(binascii.hexlify(final_msg) + b"\n")
-        response = read_until(s, b"\n")
-        if "Bad" not in str(response):
-            og_message = (i + 1) ^ j
-            result.append(og_message)
-
-            # Append the final result outside the loop
-            print("Succesful ", chr(og_message))
-            break
+                # Append the final result outside the loop
+                print("Succesful ", chr(og_message))
+                break
 
     i += 1
 flag = ""
