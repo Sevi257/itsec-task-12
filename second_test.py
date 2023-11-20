@@ -43,12 +43,10 @@ counter = 0
 while i < len(msg):
     if i == 16:
         i = 0
-        counter+=1
-    if counter >= 3:
-        break
+        counter += 1
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
-    #s.connect(("localhost", 1024))
+    # s.connect(("localhost", 1024))
     start = read_until(s, b"Do you")
     ########################################
     if i == 0:
@@ -59,7 +57,6 @@ while i < len(msg):
         encrypted_message = encrypted_message.split("(")[0].strip()
         bytes_cipher = binascii.unhexlify(encrypted_message)
         msg = binascii.unhexlify(encrypted_message)
-    print("I: ", i)
     if i > 3 or counter != 0:
         if len(result) >= 40:
             break
@@ -77,11 +74,11 @@ while i < len(msg):
                         new_byte = result[k + counter * 16] ^ (i + 1)
                         test_msg[-17 - k] ^= new_byte
                     except Exception:
-                        print(f"K: {k}, Counter: {counter*16}, length: {len(result)}")
-                test_msg[-i-17-1] = 0xFF
-                test_msg[-i-17-2] = 0xFF
+                        print(f"K: {k}, Counter: {counter * 16}, length: {len(result)}")
+                test_msg[-i - 17 - 1] = 0xFF
+                test_msg[-i - 17 - 2] = 0xFF
                 final_msg = test_msg
-                #print(binascii.hexlify(final_msg))
+                # print(binascii.hexlify(final_msg))
 
                 s.send(binascii.hexlify(iv) + b"\n")
                 s.send(binascii.hexlify(final_msg) + b"\n")
@@ -90,13 +87,7 @@ while i < len(msg):
                     og_message = (i + 1) ^ j
                     result.append(og_message)
                     # Append the final result outside the loop
-                    print("Value: ", og_message)
                     break
     i += 1
 
-fl = "flag{"
-flag = ""
-for char in result:
-    flag = format(char, '02x') + flag
-print(fl + str(bytes.fromhex(flag).decode('utf-8')))
-
+flag = "flag{" + "".join(format(char, '02x') for char in result[::-1])
