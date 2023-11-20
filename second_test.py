@@ -11,7 +11,8 @@ import telnetlib
 
 # If you have done that, copy over a hexlified message + IV over to this script (replacing the zeros)
 iv = binascii.unhexlify("76b323c4c5bca0010db836fed6a8c76e")
-msg = binascii.unhexlify("ee5a3f0c9984104ffc7652ee97ca897ad4b13dc161919364ca3b4cedc0fee8462fbf5f5195592ab622774c85f6442679b40637de54c747a8ca65bc681f5e7a93")
+msg = binascii.unhexlify(
+    "ee5a3f0c9984104ffc7652ee97ca897ad4b13dc161919364ca3b4cedc0fee8462fbf5f5195592ab622774c85f6442679b40637de54c747a8ca65bc681f5e7a93")
 
 
 def read_until(s, token):
@@ -35,7 +36,7 @@ for i in range(len(msg)):
     found = False
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
-    #s.connect(("localhost", 1024))
+    # s.connect(("localhost", 1024))
     start = read_until(s, b"Do you")
     ########################################
     if i == 0:
@@ -51,7 +52,7 @@ for i in range(len(msg)):
     for j in range(256):
         s = socket.socket()
         s.connect(("itsec.sec.in.tum.de", 7023))
-        #s.connect(("localhost", 1024))
+        # s.connect(("localhost", 1024))
 
         read_until(s, b"Do you")
         test_msg = bytearray(msg)
@@ -79,6 +80,7 @@ for i in range(len(msg)):
             # Append the final result outside the loop
             print("Succesful ", chr(og_message))
             break
-
-    for char in result:
-        print(chr(char))
+flag = ""
+for char in result:
+    flag = chr(char) + flag
+print(flag)
