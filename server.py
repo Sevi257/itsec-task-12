@@ -33,15 +33,14 @@ mhex = lambda x: binascii.hexlify(x).decode()
 
 async def handle_request(reader, writer):
     print("New connection")
-    iv = binascii.unhexlify("76b323c4c5bca0010db836fed6a8c76e")
-    secret_msg = b'flag{28dcb365deb3760c68660697a0877e448338}\n\n'
+    iv = os.urandom(16)
+    secret_msg = b'flag{28dcb365deb3760c68660697a0877e448338}'
     padded_msg = pad_message(secret_msg)
 
     my_aes = AES.new(key, AES.MODE_CBC, iv)
 
     print("Block SIze: ", my_aes.block_size)
-    crypted_msg = binascii.unhexlify("ee5a3f0c9984104ffc7652ee97ca897ad4b13dc161919364ca3b4cedc0fee8462fbf5f5195592ab622774c85f6442679b40637de54c747a8ca65bc681f5e7a93")
-
+    crypted_msg = my_aes.encrypt(padded_msg)
     writer.write("I have an encrypted message for you:\n{} (IV was {})\n\n".format(mhex(crypted_msg), mhex(iv)).encode())
     writer.write(b"Do you also have an encrypted message for me?!\nIf so, please enter IV and the message seperated by newlines now! (plz give hexlified stuff)\n")
     await writer.drain()

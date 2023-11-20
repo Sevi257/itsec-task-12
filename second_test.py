@@ -74,9 +74,9 @@ while i < len(msg):
             new_byte = result[k + counter*16] ^ (i + 1)
             test_msg[-17 - k] ^= new_byte
         final_msg = test_msg
-
-        final_msg[-i-17-1] = 0xFF
-        final_msg[-i-17-2] = 0xFF
+        if 0 <= (-i - 17 - 1) < len(final_msg):
+            final_msg[-i-17-1] = 0xFF
+            final_msg[-i-17-2] = 0xFF
         print(binascii.hexlify(final_msg))
 
         s.send(binascii.hexlify(iv) + b"\n")
@@ -94,4 +94,5 @@ while i < len(msg):
 flag = ""
 for char in result:
     flag = chr(char) + flag
+flag = "flag{" + flag
 print(flag)
