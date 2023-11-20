@@ -61,7 +61,7 @@ while i < len(msg):
         msg = binascii.unhexlify(encrypted_message)
 
     if i > 3 or counter != 0:
-        if len(result) >= 40:
+        if len(result) >= 41:
             break
         for j in range(256):
             if (47 < (i + 1) ^ j < 58) or (96 < (i + 1) ^ j < 103):
@@ -92,9 +92,5 @@ while i < len(msg):
                     break
     i += 1
 
-flag = ""
-for char in result:
-    flag = chr(char) + flag
-flag = "flag{" + flag
-print(flag)
+flag = "flag{" + "".join(chr(char) for char in result[::-1])
 
