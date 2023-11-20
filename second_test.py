@@ -33,6 +33,8 @@ result = []
 # An die erste Stelle im result array kommt auch das erste byte also immer appenden
 found_same = -1
 for i in range(len(msg)):
+    if i > 48:
+        break
     found = False
     s = socket.socket()
     s.connect(("itsec.sec.in.tum.de", 7023))
@@ -70,6 +72,7 @@ for i in range(len(msg)):
             final_msg = test_msg[:-17]
         if i >= 32:
             final_msg = test_msg[:-17]
+        print(final_msg)
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
         response = read_until(s, b"\n")
