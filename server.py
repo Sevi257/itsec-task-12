@@ -35,6 +35,7 @@ async def handle_request(reader, writer):
     print("New connection")
     iv = os.urandom(16)
     secret_msg = b'flag{28dcb365deb3760c68660697a0877e448338}'
+
     padded_msg = pad_message(secret_msg)
 
     my_aes = AES.new(key, AES.MODE_CBC, iv)
