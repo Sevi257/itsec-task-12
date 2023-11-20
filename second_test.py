@@ -70,7 +70,7 @@ while i < len(msg):
                 test_msg[-(i%16) - 17] ^= j
                 for k in range(i):
                     try:
-                        new_byte = result[k + counter * 16] ^ ((i%16) + 1)
+                        new_byte = result[k] ^ ((i%16) + 1)
                         test_msg[-17 - k] ^= new_byte
                     except Exception:
                         print(f"K: {k}, Counter: {counter * 16}, length: {len(result)}")
