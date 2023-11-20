@@ -46,11 +46,13 @@ for i in range(len(msg)):
         bytes_cipher = binascii.unhexlify(encrypted_message)
         print(len(bytes_cipher))
         test_msg = msg
+        print(encrypted_message)
+        print(binascii.hexlify(iv))
     print(bytearray(result.encode()))
     for j in range(256):
         s = socket.socket()
-        s.connect(("itsec.sec.in.tum.de", 7023))
-        #s.connect(("localhost", 1024))
+        #s.connect(("itsec.sec.in.tum.de", 7023))
+        s.connect(("localhost", 1024))
 
         read_until(s, b"Do you")
         test_msg = bytearray(msg)
@@ -91,7 +93,6 @@ for i in range(len(msg)):
                 print("Succesful ", chr(og_message))
                 break
     if not found:
-        # Das Padding ist richtig
         found = True
         c8_ = found_same
         og_message = (i + 1) ^ c8_
@@ -104,7 +105,6 @@ for i in range(len(msg)):
                 test2_msg[- 17 - i] = c8_two
                 msg = bytes(test2_msg)
             else:
-                #Bei Result wird falsch geaccesed
                 c8_test = bytearray(result.encode())[-k] ^ (i + 2)
                 print(f"k: {k}, Byte: {bytearray(result.encode())[-k]}, P2'': {(i + 2)}, C8 Test: {c8_test}")
                 test2_msg = bytearray(msg)
