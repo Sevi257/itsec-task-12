@@ -89,6 +89,8 @@ while i < len(msg):
             # Append the final result outside the loop
             print("Succesful ", chr(og_message))
             break
+
+    i += 1
 flag = ""
 for char in result:
     flag = chr(char) + flag
