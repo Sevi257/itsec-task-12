@@ -35,7 +35,8 @@ found_same = -1
 blockcounter = 0
 for i in range(len(msg)):
     if i == 16 or i == 32:
-        blockcounter += 1
+        i = 0
+        msg = msg[:-16]
     if i > 48:
         break
     s = socket.socket()
@@ -65,23 +66,19 @@ for i in range(len(msg)):
 
         for k in range(i):
             # Das Padding muss ja wieder 1 sein
-            new_byte = result[k] ^ (i + 1 - (blockcounter*16))
+            new_byte = result[k] ^ (i + 1)
             test_msg[-17 - k] ^= new_byte
         final_msg = test_msg
-        if i >= 16:
-            final_msg = test_msg[:-16]
-        if i >= 32:
-            final_msg = test_msg[:-16]
 
-        final_msg[len(test_msg)-i-17-1] = 0xFF
-        final_msg[len(test_msg)-i-17-2] = 0xFF
-        #print(binascii.hexlify(final_msg))
+        final_msg[-i-17-1] = 0xFF
+        final_msg[-i-17-2] = 0xFF
+        print(binascii.hexlify(final_msg))
 
         s.send(binascii.hexlify(iv) + b"\n")
         s.send(binascii.hexlify(final_msg) + b"\n")
         response = read_until(s, b"\n")
         if "Bad" not in str(response):
-            og_message = (i + 1 -(blockcounter*16)) ^ j
+            og_message = (i + 1) ^ j
             result.append(og_message)
 
             # Append the final result outside the loop
