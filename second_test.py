@@ -61,21 +61,18 @@ while i < len(msg):
         msg = binascii.unhexlify(encrypted_message)
 
     if i > 3 or counter != 0:
-        if len(result) >= 39:
+        if len(result) >= 40:
             break
         for j in range(256):
             if (47 < (i + 1) ^ j < 58) or (96 < (i + 1) ^ j < 103):
                 s = socket.socket()
                 s.connect(("itsec.sec.in.tum.de", 7023))
-                #s.connect(("localhost", 1024))
                 test_msg = bytearray(msg)
                 read_until(s, b"Do you")
                 for l in range(counter):
                     test_msg = test_msg[:-16]
                 test_msg[-i - 17] ^= j
-                # Change test_msg slightly
                 for k in range(i):
-                    # Das Padding muss ja wieder 1 sein
                     new_byte = result[k + counter * 16] ^ (i + 1)
                     test_msg[-17 - k] ^= new_byte
                 final_msg = test_msg
