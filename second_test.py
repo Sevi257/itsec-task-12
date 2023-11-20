@@ -70,7 +70,8 @@ while i < len(msg):
                 #Es werden die falschen bytes verxored
                 for k in range(i):
                     new_byte = result[k] ^ (i % 16 + 1)
-                    print("Gewählter Wert: ", result[k], " an der Stelle ", -17-k)
+                    if i >14:
+                        print("Gewählter Wert: ", result[k], " an der Stelle ", -17-k)
                     test_msg[-17 - k] ^= new_byte
                     print()
                 #test_msg[-i - 17 - 1] = 0xFF
