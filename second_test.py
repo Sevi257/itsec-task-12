@@ -60,15 +60,10 @@ while i < len(msg):
         encrypted_message = encrypted_message.split("(")[0].strip()
         bytes_cipher = binascii.unhexlify(encrypted_message)
         msg = binascii.unhexlify(encrypted_message)
-    test_msg = bytearray(msg)
 
-    for k in range(i):
-        # Das Padding muss ja wieder 1 sein
-        new_byte = result[k + counter * 16] ^ (i + 1)
-        test_msg[-17 - k] ^= new_byte
     if i > 3 or counter != 0:
         for j in range(256):
-            if (47 < (i + 1) ^ j < 58) or (96 < (i + 1) ^ j < 103)  :
+            if (47 < (i + 1) ^ j < 58) or (96 < (i + 1) ^ j < 103):
                 s = socket.socket()
                 s.connect(("itsec.sec.in.tum.de", 7023))
                 #s.connect(("localhost", 1024))
@@ -78,7 +73,10 @@ while i < len(msg):
                     test_msg = test_msg[:-16]
                 test_msg[-i - 17] ^= j
                 # Change test_msg slightly
-
+                for k in range(i):
+                    # Das Padding muss ja wieder 1 sein
+                    new_byte = result[k + counter * 16] ^ (i + 1)
+                    test_msg[-17 - k] ^= new_byte
                 final_msg = test_msg
                 if 0 <= (-i - 17 - 1) < len(final_msg):
                     final_msg[-i-17-1] = 0xFF
