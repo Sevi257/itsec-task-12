@@ -57,7 +57,7 @@ while i < len(msg):
         bytes_cipher = binascii.unhexlify(encrypted_message)
         msg = binascii.unhexlify(encrypted_message)
     if i > 3 or counter != 0:
-        if len(result) >= 40:
+        if i>= 39:
             break
         for j in range(256):
             if (47 < (i%16 + 1) ^ j < 58) or (96 < (i%16 + 1) ^ j < 103):
