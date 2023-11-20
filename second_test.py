@@ -56,12 +56,12 @@ for block in range(1, 4):
 
             read_until(s, b"Do you")
             test_msg = bytearray(msg)
-            test_msg[-(i*block) - 17] ^= j
+            test_msg[-i - (17*block) ] ^= j
             # Change test_msg slightly
 
             for k in range(i):
-                new_byte = result[k + (block-1)*16] ^ (i + 1)
-                test_msg[-17 - k - (block-1)*16] ^= new_byte
+                new_byte = result[k + (block-1)*16] ^ (k + 1)
+                test_msg[(-17*block) - k] ^= new_byte
             final_msg = test_msg
             if block == 2:
                 final_msg = test_msg[:-16]
